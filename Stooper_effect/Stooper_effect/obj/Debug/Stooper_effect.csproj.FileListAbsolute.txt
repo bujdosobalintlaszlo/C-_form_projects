@@ -1,0 +1,10 @@
+C:\Users\KomPhone\Desktop\Stooper_effect\Stooper_effect\bin\Debug\Stooper_effect.exe.config
+C:\Users\KomPhone\Desktop\Stooper_effect\Stooper_effect\bin\Debug\Stooper_effect.exe
+C:\Users\KomPhone\Desktop\Stooper_effect\Stooper_effect\bin\Debug\Stooper_effect.pdb
+C:\Users\KomPhone\Desktop\Stooper_effect\Stooper_effect\obj\Debug\Stooper_effect.csproj.AssemblyReference.cache
+C:\Users\KomPhone\Desktop\Stooper_effect\Stooper_effect\obj\Debug\Stooper_effect.Form1.resources
+C:\Users\KomPhone\Desktop\Stooper_effect\Stooper_effect\obj\Debug\Stooper_effect.Properties.Resources.resources
+C:\Users\KomPhone\Desktop\Stooper_effect\Stooper_effect\obj\Debug\Stooper_effect.csproj.GenerateResource.cache
+C:\Users\KomPhone\Desktop\Stooper_effect\Stooper_effect\obj\Debug\Stooper_effect.csproj.CoreCompileInputs.cache
+C:\Users\KomPhone\Desktop\Stooper_effect\Stooper_effect\obj\Debug\Stooper_effect.exe
+C:\Users\KomPhone\Desktop\Stooper_effect\Stooper_effect\obj\Debug\Stooper_effect.pdb
