@@ -161,7 +161,7 @@ namespace Stooper_effect
         /// <param name="e"></param>
         private void Zold(object o, EventArgs e)
         {
-            if (keresett == "Zold")
+            if (keresett == "Zöld")
             {
                 jok++;
             }
@@ -180,7 +180,7 @@ namespace Stooper_effect
         /// <param name="e"></param>
         private void Kek(object o, EventArgs e)
         {
-            if (keresett == "Kek")
+            if (keresett == "Kék")
             {
                 jok++;
             }
@@ -218,7 +218,7 @@ namespace Stooper_effect
         /// <param name="e"></param>
         private void Sarga(object o, EventArgs e)
         {
-            if (keresett == "Sarga")
+            if (keresett == "Sárga")
             {
                 jok++;
             }
