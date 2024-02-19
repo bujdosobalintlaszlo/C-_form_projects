@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -37,6 +37,7 @@ namespace Sudoku
                 l.Text = (i + 1).ToString();
                 form.Controls.Add(l);
                 labelLista.Add(l);
+                
             }
         }
         public Game(string filepath,Form1 form)
@@ -49,7 +50,7 @@ namespace Sudoku
         {
             
             this.form.Controls.Clear();
-            LabelLoad();
+            //LabelLoad();
             FileBeolv();
             FTimer = new FlowLayoutPanel();
             FTimer.Width = form.Width;
@@ -69,6 +70,7 @@ namespace Sudoku
                 mapSize = sudokuMap.Length;
                 DisplayMap();
                 clock.StartTimer();
+                OptionGen();
             }
             else
             {
@@ -96,25 +98,31 @@ namespace Sudoku
 
         private void DisplayMap()
         {
-            DataGridView Dmap = DataGridViewGen(mapSize, mapSize, 50, 50, 600, 600, Color.White);
+            DataGridView Dmap = DataGridViewGen(mapSize, mapSize, 60, 60, 543, 543, Color.White);
             Dmap.CellClick += new DataGridViewCellEventHandler(datagridviewCellClick);
             Dmap.RowHeadersVisible = false;
             Dmap.ColumnHeadersVisible = false;
             Dmap.ColumnCount = mapSize;
             Dmap.RowCount = mapSize;
+            Dmap.ReadOnly = true;
+            Dmap.AllowUserToResizeRows = false;
+            Dmap.AllowUserToResizeColumns = false;
 
-            for (int i = 0; i < mapSize; i++)
-            {
-                for (int j = 0; j < mapSize; j++)
-                {
-                    if (sudokuMap[i][j] == '.')
-                    {
+
+            for (int i = 0; i < mapSize; i++){
+                for (int j = 0; j < mapSize; j++){
+                    if (sudokuMap[i][j] == '.'){
                         Dmap.Rows[i].Cells[j].Value = "";
-                    }
-                    else
-                    {
+                        Dmap.Rows[i].Resizable = DataGridViewTriState.False;
+                        Dmap.Rows[i].Cells[j].Style.BackColor = Color.LemonChiffon;
+                    }else{
                         Dmap.Rows[i].Cells[j].Value = sudokuMap[i][j].ToString();
+                        Dmap.Rows[i].Resizable = DataGridViewTriState.False;
+                        Dmap.Rows[i].Cells[j].Style.BackColor = Color.Wheat;
+                        Dmap.Rows[i].Cells[j].Style.ForeColor = Color.White;
+                        Dmap.Rows[i].Cells[j].Style.Font = new Font("Arial", 30);
                     }
+                    Dmap.Rows[i].Cells[j].Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 }
             }
 
@@ -133,30 +141,62 @@ namespace Sudoku
         {
             DataGridView dgv = new DataGridView();
             dgv.RowCount = rowAmount;
+            
             for (int i = 0; i < columnAmount; i++)
             {
                 dgv.Columns.Add($"Column{i + 1}", $"Column{i + 1}");
+                dgv.Columns[i].Width = cellWidth;
+                dgv.Rows[i].Height = cellHeight;
             }
-            dgv.RowTemplate.Height = cellHeight;
-            foreach (DataGridViewColumn column in dgv.Columns)
-            {
-                column.Width = cellWidth;
-            }
+            // dgv.RowTemplate.Height = cellHeight;
+
+
             dgv.Height = height;
             dgv.Width = width;
+
             dgv.BackgroundColor = backgroundColor;
+
+            // Letiltjuk a sorok és oszlopok méretezését
+            dgv.AllowUserToResizeRows = false;
+            dgv.AllowUserToResizeColumns = false;
+
             return dgv;
         }
 
+        void OptionGen()
+        {
+            DataGridView Doption = new DataGridView();
+            Doption.RowHeadersVisible = false;
+            Doption.ColumnHeadersVisible = false;
+            Doption.ReadOnly = true;
+            Doption.AllowUserToResizeRows = false;
+            Doption.AllowUserToResizeColumns = false;
+
+            // Beállítjuk a méretét és a pozícióját
+            Doption.Width = 199;
+            Doption.Height = 202;
+            Doption.Location = new Point(0, 0);
+
+            // Beállítjuk a cellák méretét
+            int cellSize = 60;
+            for (int i = 0; i < 3; i++)
+            {
+                Doption.Columns.Add($"Column{i + 1}", $"Column{i + 1}");
+                Doption.Columns[i].Width = cellSize;
+                Doption.Rows[i].Height = cellSize;
+                Doption.Rows.Add();
+            }
+
+            FGame.Controls.Add(Doption);
+        }
+
+
+
         private void datagridviewCellClick(object sender, DataGridViewCellEventArgs e)
         {
-            /*
-            labelLista.ForEach(x =>{
-                if (dgv.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString() == " "){
-                    x.Visible = true;
-                }
-            });
-            */
+
+            MessageBox.Show("a");
+
         }
     }
 }
