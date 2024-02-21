@@ -136,7 +136,7 @@ namespace Sudoku
         }
         void DmapDesignSet()
         {
-            Dmap.CellClick += new DataGridViewCellEventHandler(datagridviewCellClick);
+            Dmap.SelectionChanged += new EventHandler(datagridviewCellClick);
             Dmap.RowHeadersVisible = false;
             Dmap.ColumnHeadersVisible = false;
             Dmap.ColumnCount = mapSize;
@@ -144,6 +144,7 @@ namespace Sudoku
             Dmap.ReadOnly = true;
             Dmap.AllowUserToResizeRows = false;
             Dmap.AllowUserToResizeColumns = false;
+            Dmap.MultiSelect = false;
         }
         void TableLayoutSetup()
         {
@@ -195,48 +196,26 @@ namespace Sudoku
             }
             Doption.Columns.RemoveAt(3);
             //Doption.BackgroundColor = Color.Wheat;
-            
+
             Button bDelete = new Button();
             bDelete.Text = "Delete";
             bDelete.Size = new Size(100, 30);
             bDelete.Location = new Point(10, Doption.Bottom + 10 - FGame.AutoScrollPosition.Y);
+            bDelete.Click += Delete;
             FGame.Controls.Add(bDelete);
             FGame.Controls.Add(Doption);
-            //kell egy negyedik sor amiben egyesítve vannak a cellak
+           
         }
         string lastClickedRowIndex;
         string lastClickedColumnIndex;
         int selectedNum;
-        void datagridviewCellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && selectedNum != 0) // Ellenőrizd, hogy a kattintás egy cellán belül történt-e
-            {
-                DataGridViewCell clickedCell = Dmap.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                lastClickedRowIndex = Convert.ToString(e.RowIndex);
-                lastClickedColumnIndex = Convert.ToString(e.ColumnIndex);
-                if (clickedCell.Tag != "x")
-                {
-                    Dmap.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = selectedNum;
-                    Dmap.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.ForeColor = Color.ForestGreen;
-                    Dmap.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.Font = new Font("Arial", 30);
-                }
-                else
-                {
-                    Dmap.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.Red;
-                    Thread.Sleep(1000);
-                    Dmap.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.Wheat;
-                }
+        Dictionary<int, int> writtenNumsCount = new Dictionary<int, int>();
 
-                // Most használd a cellTag változót az adott cella tag-jének felhasználásához
-                // Példa: Console.WriteLine("A kiválasztott cella Tag-je: " + cellTag.ToString());
-            }
-        }
 
 
         void SelectedNum(object o, DataGridViewCellEventArgs e)
         {
             string temp = Convert.ToString(Doption.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag);
-            //sudokuMap[e.RowIndex][e.ColumnIndex] = temp;
             if (CheckIfAllowed(temp, Convert.ToInt32(lastClickedRowIndex), Convert.ToInt32(lastClickedColumnIndex)))
             {
                 selectedNum = int.Parse(Convert.ToString(temp));
@@ -245,30 +224,30 @@ namespace Sudoku
             {
                 sudokuMap[Convert.ToInt32(lastClickedRowIndex)][Convert.ToInt32(lastClickedColumnIndex)] = ' ';
                 Dmap.Rows[Convert.ToInt32(lastClickedRowIndex)].Cells[Convert.ToInt32(lastClickedColumnIndex)].Style.ForeColor = Color.Red;
+                selectedNum = int.Parse(Convert.ToString(temp));
             }
         }
 
         bool CheckIfAllowed(string num, int row, int col)
         {
-            // Ellenőrizzük a sorban
+            
             for (int i = 0; i < 9; i++)
             {
                 if (i != col && sudokuMap[row][i] == Convert.ToChar(num))
                 {
-                    return false; // Az adott szám már szerepel a sorban
+                    return false;
                 }
             }
 
-            // Ellenőrizzük az oszlopban
+            
             for (int i = 0; i < 9; i++)
             {
                 if (i != row && sudokuMap[i][col] == Convert.ToChar(num))
                 {
-                    return false; // Az adott szám már szerepel az oszlopban
+                    return false; 
                 }
             }
 
-            // Ellenőrizzük a 3x3-as négyzetben
             int boxStartRow = row - row % 3;
             int boxStartCol = col - col % 3;
             for (int i = boxStartRow; i < boxStartRow + 3; i++)
@@ -277,15 +256,46 @@ namespace Sudoku
                 {
                     if (i != row && j != col && sudokuMap[i][j] == Convert.ToChar(num))
                     {
-                        return false; // Az adott szám már szerepel a 3x3-as négyzetben
+                        return false;
                     }
                 }
             }
 
-            return true; // Az adott szám engedélyezett
+            return true;
         }
 
+        void Delete(object o, EventArgs e)
+        {
+            Dmap.Rows[Convert.ToInt32(lastClickedRowIndex)].Cells[Convert.ToInt32(lastClickedColumnIndex)].Value = " ";
+        }
 
+        private void datagridviewCellClick(object sender, EventArgs e)
+        {
+            if (Dmap.SelectedCells[0].RowIndex>= 0 && Dmap.SelectedCells[0].ColumnIndex >= 0 && selectedNum != 0)
+            {
+                int x = Dmap.SelectedCells[0].RowIndex;
+                int y = Dmap.SelectedCells[0].ColumnIndex;
+                DataGridViewCell clickedCell = Dmap.Rows[x].Cells[y];
+                lastClickedRowIndex = Convert.ToString(x);
+                lastClickedColumnIndex = Convert.ToString(y);
+                if (clickedCell.Tag != "x")
+                {
+                    Dmap.Rows[x].Cells[y].Value = selectedNum;
+                    Dmap.Rows[x].Cells[y].Style.ForeColor = Color.ForestGreen;
+                    Dmap.Rows[x].Cells[y].Style.Font = new Font("Arial", 30);
+                    MessageBox.Show($"{x} - {y}");
+                }
+                else
+                {
+                    Dmap.Rows[x].Cells[y].Style.BackColor = Color.Red;
+                    Thread.Sleep(1000);
+                    Dmap.Rows[x].Cells[y].Style.BackColor = Color.Wheat;
+                    MessageBox.Show($"{x} - {y}");
+                }
 
+                // Most használd a cellTag változót az adott cella tag-jének felhasználásához
+                // Példa: Console.WriteLine("A kiválasztott cella Tag-je: " + cellTag.ToString());
+            }
+        }
     }
 }
