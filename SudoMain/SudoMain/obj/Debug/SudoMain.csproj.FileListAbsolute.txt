@@ -1,0 +1,10 @@
+C:\Users\KomPhone\Desktop\SudoMain\SudoMain\bin\Debug\SudoMain.exe.config
+C:\Users\KomPhone\Desktop\SudoMain\SudoMain\bin\Debug\SudoMain.exe
+C:\Users\KomPhone\Desktop\SudoMain\SudoMain\bin\Debug\SudoMain.pdb
+C:\Users\KomPhone\Desktop\SudoMain\SudoMain\obj\Debug\SudoMain.csproj.AssemblyReference.cache
+C:\Users\KomPhone\Desktop\SudoMain\SudoMain\obj\Debug\SudoMain.Properties.Resources.resources
+C:\Users\KomPhone\Desktop\SudoMain\SudoMain\obj\Debug\SudoMain.csproj.GenerateResource.cache
+C:\Users\KomPhone\Desktop\SudoMain\SudoMain\obj\Debug\SudoMain.csproj.CoreCompileInputs.cache
+C:\Users\KomPhone\Desktop\SudoMain\SudoMain\obj\Debug\SudoMain.exe
+C:\Users\KomPhone\Desktop\SudoMain\SudoMain\obj\Debug\SudoMain.pdb
+C:\Users\KomPhone\Desktop\SudoMain\SudoMain\obj\Debug\SudoMain.Form1.resources
