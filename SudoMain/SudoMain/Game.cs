@@ -1,4 +1,4 @@
-﻿using SudoMain.Sudoku;
+using SudoMain.Sudoku;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -27,6 +27,7 @@ namespace SudoMain
         FlowLayoutPanel FTimer = new FlowLayoutPanel();
         DataGridView Doption;
         DataGridView dgv;
+        int ures;
         public Game(Form1 form1)
         {
             this.form1 = form1;
@@ -95,6 +96,7 @@ namespace SudoMain
                         Dmap.Rows[i].Resizable = DataGridViewTriState.False;
                         Dmap.Rows[i].Cells[j].Style.BackColor = Color.LemonChiffon;
                         Dmap.Rows[i].Cells[j].Tag = i + j;
+                        ures++;
                     }
                     else
                     {
@@ -205,6 +207,10 @@ namespace SudoMain
                 {
                     if (Dmap.Rows[i].Cells[x].Tag != "x")
                     {
+                        if (Dmap.Rows[i].Cells[x].Tag != "x" && Dmap.Rows[i].Cells[x].Value != " ")
+                        {
+                            Dmap.Rows[i].Cells[x].Value = " ";
+                        }
                         Dmap.Rows[i].Cells[x].Value = m[i, x];
                         Dmap.Rows[i].Cells[x].Style.ForeColor = Color.Brown;
                         Dmap.Rows[i].Cells[x].Style.Font = new Font("Arial", 30);
@@ -282,8 +288,8 @@ namespace SudoMain
             }
             else
             {
-                map[Convert.ToInt32(lastClickedRowIndex),Convert.ToInt32(lastClickedColumnIndex)] = ' ';
-                Dmap.Rows[Convert.ToInt32(lastClickedRowIndex)].Cells[Convert.ToInt32(lastClickedColumnIndex)].Style.ForeColor = Color.Red;
+                //map[Convert.ToInt32(lastClickedRowIndex),Convert.ToInt32(lastClickedColumnIndex)] = ' ';
+                //Dmap.Rows[Convert.ToInt32(lastClickedRowIndex)].Cells[Convert.ToInt32(lastClickedColumnIndex)].Style.ForeColor = Color.Red;
                 selectedNum = int.Parse(Convert.ToString(temp));
             }
         }
@@ -326,32 +332,235 @@ namespace SudoMain
         void Delete(object o, EventArgs e)
         {
             Dmap.Rows[Convert.ToInt32(lastClickedRowIndex)].Cells[Convert.ToInt32(lastClickedColumnIndex)].Value = " ";
+            Cellaures();
         }
 
         private void datagridviewCellClick(object sender, EventArgs e)
         {
             if (Dmap.SelectedCells[0].RowIndex >= 0 && Dmap.SelectedCells[0].ColumnIndex >= 0 && selectedNum != 0)
             {
-                int x = Dmap.SelectedCells[0].RowIndex;
-                int y = Dmap.SelectedCells[0].ColumnIndex;
+                int x = Dmap.CurrentCell.RowIndex;
+                int y = Dmap.CurrentCell.ColumnIndex;
                 DataGridViewCell clickedCell = Dmap.Rows[x].Cells[y];
                 lastClickedRowIndex = Convert.ToString(x);
                 lastClickedColumnIndex = Convert.ToString(y);
                 if (clickedCell.Tag != "x")
                 {
-                    Dmap.Rows[x].Cells[y].Value = selectedNum;
-                    Dmap.Rows[x].Cells[y].Style.ForeColor = Color.ForestGreen;
-                    Dmap.Rows[x].Cells[y].Style.Font = new Font("Arial", 30);
-                    MessageBox.Show($"{x} - {y}");
+                    Fright.Enabled = true;
+                    if (Dmap.CurrentCell.Value == null)
+                    {
+                        ures--;
+                    }
+
+                    string ertek = selectedNum.ToString();
+
+                    if (Dmap.CurrentCell.Style.BackColor == Color.IndianRed)
+                    {
+                        //visszaszinez
+                        beszinezSor(x, Dmap.CurrentCell.Value.ToString(), Color.LemonChiffon);
+                        beszinezOszlop(y, Dmap.CurrentCell.Value.ToString(), Color.LemonChiffon);
+                        beszinezNegyzet(x, y, Dmap.CurrentCell.Value.ToString(), Color.LemonChiffon);
+                    }
+                    bool voltRossz = false;
+                    if (vanASorban(x, ertek))
+                    {
+                        Dmap.CurrentCell.Value = ertek;
+                        beszinezSor(x, ertek, Color.IndianRed);
+                        voltRossz = true;
+                    }
+                    if (vanAzOszlopban(y, ertek))
+                    {
+                        Dmap.CurrentCell.Value = ertek;
+                        beszinezOszlop(y, ertek, Color.IndianRed);
+                        voltRossz = true;
+                    }
+                    if (vanANegyzetben(x, y, ertek))
+                    {
+                        Dmap.CurrentCell.Value = ertek;
+                        beszinezNegyzet(x, y, ertek, Color.IndianRed);
+                        voltRossz = true;
+                    }
+                    if (!voltRossz)
+                    {
+                        if (Dmap.CurrentCell.Style.BackColor == Color.IndianRed)
+                        {
+                            beszinezSor(x, Dmap.CurrentCell.Value.ToString(), Color.LemonChiffon);
+                            beszinezOszlop(y, Dmap.CurrentCell.Value.ToString(), Color.LemonChiffon);
+                            beszinezNegyzet(x, y, Dmap.CurrentCell.Value.ToString(), Color.LemonChiffon);
+                        }
+                        Dmap.CurrentCell.Value = ertek;
+
+                    }
+                    
+                    if (ures == 0 && NincsPiros())
+                    {
+                        MessageBox.Show("nyertél");
+                    }
                 }
                 else
-                {
-                    Dmap.Rows[x].Cells[y].Style.BackColor = Color.Red;
-                    Thread.Sleep(1000);
-                    Dmap.Rows[x].Cells[y].Style.BackColor = Color.Wheat;
-                    MessageBox.Show($"{x} - {y}");
+                { 
+                    Fright.Enabled = false;
                 }
 
+            }
+
+        }
+        void Cellaures()
+        {
+            for (int i = 0; i < Dmap.RowCount; ++i)
+            {
+                for (int j = 0; j < Dmap.ColumnCount; ++j)
+                {
+                    if (Dmap.Rows[i].Cells[j].Value == null)
+                    {
+                        if (Dmap.Rows[i].Cells[j].Tag.ToString() == "x")
+                        {
+                            Dmap.Rows[i].Cells[j].Style.BackColor = Color.Black;
+                        }
+                        else
+                        {
+                            Dmap.Rows[i].Cells[j].Style.BackColor = Color.LemonChiffon;
+                        }
+                    }
+                    else
+                    {
+                        if (Dmap.Rows[i].Cells[j].Tag.ToString() == "x")
+                        {
+                            Dmap.Rows[i].Cells[j].Style.BackColor = Color.Black;
+                        }
+                        else
+                        {
+                            Dmap.Rows[i].Cells[j].Style.BackColor = Color.LemonChiffon;
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        bool NincsPiros()
+        {
+            for (int i = 0; i < Dmap.RowCount; ++i)
+            {
+                for (int j = 0; j < Dmap.ColumnCount; ++j)
+                {
+                    if (Dmap.Rows[i].Cells[j].Style.BackColor == Color.IndianRed)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        private bool vanASorban(int sor, string ertek)
+        {
+            for (int i = 0; i < Dmap.Rows[sor].Cells.Count; i++)
+            {
+                if (Dmap.Rows[sor].Cells[i].Value != null &&
+                    Dmap.Rows[sor].Cells[i].Value.ToString() == ertek)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+
+        private void beszinezSor(int sor, string ertek, Color szin)
+        {
+            for (int i = 0; i < Dmap.Rows[sor].Cells.Count; i++)
+            {
+                if (Dmap.Rows[sor].Cells[i].Value != null &&
+                    Dmap.Rows[sor].Cells[i].Value.ToString() == ertek)
+                {
+                    if (Dmap.Rows[sor].Cells[i].Tag == "x" && szin == Color.LemonChiffon)
+                    {
+                        Dmap.Rows[sor].Cells[i].Style.BackColor = Color.Wheat;
+                    }
+                    else
+                    {
+                        Dmap.Rows[sor].Cells[i].Style.BackColor = szin;
+                    }
+                }
+            }
+        }
+
+        private bool vanAzOszlopban(int oszlop, string ertek)
+        {
+            for (int i = 0; i < Dmap.RowCount; i++)
+            {
+                if (Dmap.Rows[i].Cells[oszlop].Value != null &&
+                    Dmap.Rows[i].Cells[oszlop].Value.ToString() == ertek)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void beszinezOszlop(int oszlop, string ertek, Color szin)
+        {
+            for (int i = 0; i < Dmap.RowCount; i++)
+            {
+                if (Dmap.Rows[i].Cells[oszlop].Value != null &&
+                    Dmap.Rows[i].Cells[oszlop].Value.ToString() == ertek)
+                {
+                    if (Dmap.Rows[i].Cells[oszlop].Tag == "x" && szin == Color.LemonChiffon)
+                    {
+                        Dmap.Rows[i].Cells[oszlop].Style.BackColor = Color.Wheat;
+                    }
+                    else
+                    {
+                        Dmap.Rows[i].Cells[oszlop].Style.BackColor = szin;
+                    }
+                }
+            }
+        }
+
+        private bool vanANegyzetben(int sor, int oszlop, string ertek)
+        {
+            int balFelsoSor = sor - sor % 3;
+            int balFelsoOszlop = oszlop - oszlop % 3;
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (Dmap.Rows[balFelsoSor + i].Cells[balFelsoOszlop + j].Value != null &&
+                        Dmap.Rows[balFelsoSor + i].Cells[balFelsoOszlop + j].Value.ToString() == ertek)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+
+        private void beszinezNegyzet(int sor, int oszlop, string ertek, Color szin)
+        {
+            int bfs = sor - sor % 3;
+            int bfo = oszlop - oszlop % 3;
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (Dmap.Rows[bfs + i].Cells[bfo + j].Value != null &&
+                        Dmap.Rows[bfs + i].Cells[bfo + j].Value.ToString() == ertek)
+                    {
+
+                        if (Dmap.Rows[bfs + i].Cells[bfo + j].Tag == "x" && szin == Color.LemonChiffon)
+                        {
+                            Dmap.Rows[bfs + i].Cells[bfo + j].Style.BackColor = Color.Wheat;
+                        }
+                        else
+                        {
+                            Dmap.Rows[bfs + i].Cells[bfo + j].Style.BackColor = szin;
+                        }
+                    }
+
+                }
             }
         }
     }
